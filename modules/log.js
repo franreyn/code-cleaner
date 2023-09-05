@@ -12,7 +12,8 @@ import { checkIframes } from "./log/checkIframes.js"
 import { checkImgAlt } from "./log/checkImgAlt.js"
 import { checkTables } from "./log/checkTables.js"
 import { checkTitleAndH1 } from "./log/checkTitleAndH1.js"
-import { checkIframeTitles } from './log/checkIframeTitles.js';
+import { checkIframeTitles } from "./log/checkIframeTitles.js";
+import { checkHeadingOrder } from "./log/checkHeadingOrder.js";
 
 export function log() {
   let errors = {};
@@ -35,6 +36,7 @@ export function log() {
           checkDeprecatedClasses(document, file.path, errors);
           checkTables(document, file.path, errors);
           checkTitleAndH1(document, file.path, errors);
+          checkHeadingOrder(document, file.path, errors);
           checkImgAlt(document, file.path, errors);
 
           file.contents = Buffer.from(dom.serialize());
