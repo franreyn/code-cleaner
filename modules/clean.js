@@ -85,6 +85,7 @@ export function clean() {
 					indent_size: 2,
 					wrap_attributes: false,
 					extra_liners: [],
+					preserve_newlines: false,
 				})
 			)
 
