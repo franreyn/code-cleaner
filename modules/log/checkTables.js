@@ -4,13 +4,6 @@ export function checkTables(document, filePath, errors) {
 
   // Check each table
   tables.forEach(table => {
-    // Check if the table has the 'display-lg' class
-    if (!table.classList.contains('display-lg')) {
-      if (!errors[filePath]) {
-        errors[filePath] = [];
-      }
-      errors[filePath].push('A table does not contain \'.display-lg\'');
-    }
 
     // Check the structure of the table
     let thead = table.querySelector('thead');

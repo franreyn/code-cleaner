@@ -7,25 +7,36 @@ export function clean() {
 		gulp
 			.src("_input/**/*.{html,htm}")
 
-			// remove elements with "&nbsp" as inner-text
-			// .pipe(
-			// 	dom(function () {
-			// 		const par = this.querySelectorAll("p");
-			// 		return par.forEach((e) => {
-			// 			if (e.textContent == "\xa0") e.remove();
-			// 		});
-			// 	})
-			// )
-
-			// remove empty elements
-			// .pipe(
-			// 	dom(function () {
-			// 		const par = this.querySelectorAll("span, h1, h2, h3, h4, h5, h6, p, strong, em");
-			// 		return par.forEach((e) => {
-			// 			if (e.textContent == "") e.remove();
-			// 		});
-			// 	})
-			// )
+			// remove empty elements and those that only contain &nbsp;
+			.pipe(
+				dom(function () {
+					let elements = Array.from(this.querySelectorAll("span, h1, h2, h3, h4, h5, h6, p, strong, em, a, iframe"));
+					let hasChanges = true;
+					while (hasChanges) {
+						hasChanges = false;
+						elements.forEach((elem) => {
+							if (elem.tagName.toLowerCase() === "iframe") {
+								if (!elem.hasAttribute("src") || elem.getAttribute("src").trim() === "") {
+									elem.remove();
+								}
+							} else {
+									const iframe = elem.querySelector("iframe");
+									if (iframe) {
+										if (!iframe.hasAttribute("src") || iframe.getAttribute("src").trim() === "") {
+											iframe.remove();
+										} else if (elem.childNodes.length === 1 && elem.innerHTML.trim() === iframe.outerHTML) {
+												elem.replaceWith(iframe.cloneNode(true));
+													hasChanges = true;
+										}
+									} else if ((elem.textContent.trim() === "" || elem.textContent.trim() === "\xa0") && !elem.querySelector("iframe")) {
+											elem.remove();
+									}
+							}
+						});
+						elements = Array.from(this.querySelectorAll("span, h1, h2, h3, h4, h5, h6, p, strong, em, iframe"));
+					}
+				})
+			)
 
       // remove 'width' and 'style' attributes from text elements
 			.pipe(
@@ -67,14 +78,24 @@ export function clean() {
 				})
 			)
 
-			// remove empty anchor tags
+			// add '.display-lg' to tables
 			.pipe(
 				dom(function () {
-					const anchors = this.querySelectorAll("a");
-					return anchors.forEach((anchor) => {
-						if (anchor.textContent.trim() === "") {
-							anchor.remove();
+					const tables = this.querySelectorAll("table");
+					return tables.forEach((table) => {
+						if (!table.classList.contains("display-lg")) {
+							table.classList.add("display-lg");
 						}
+					})
+				})
+			)
+
+			// remove script tags not in <head>
+			.pipe(
+				dom(function () {
+					const scripts = Array.from(this.querySelectorAll("body script"));
+					scripts.forEach((script) => {
+						script.remove();
 					});
 				})
 			)
