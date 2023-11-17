@@ -67,6 +67,18 @@ export function clean() {
 				})
 			)
 
+			// remove empty anchor tags
+			.pipe(
+				dom(function () {
+					const anchors = this.querySelectorAll("a");
+					return anchors.forEach((anchor) => {
+						if (anchor.textContent.trim() === "") {
+							anchor.remove();
+						}
+					});
+				})
+			)
+
       // beautify code
 			.pipe(
 				beautify({
