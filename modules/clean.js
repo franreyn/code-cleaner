@@ -94,18 +94,6 @@ export function clean() {
 				})
 			)
 
-			// add '.display-lg' to tables
-			.pipe(
-				dom(function () {
-					const tables = this.querySelectorAll("table");
-					return tables.forEach((table) => {
-						if (!table.classList.contains("display-lg")) {
-							table.classList.add("display-lg");
-						}
-					})
-				})
-			)
-
 			// remove script tags not in <head>
 			.pipe(
 				dom(function () {
