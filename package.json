@@ -16,7 +16,8 @@
     "gulp": "^4.0.2",
     "gulp-cli": "^2.3.0",
     "gulp-dom": "^1.0.0",
-    "gulp-jsbeautifier": "^3.0.1"
+    "gulp-jsbeautifier": "^3.0.1",
+    "gulp-strip-comments": "^2.6.0"
   },
   "dependencies": {
     "jsdom": "^22.1.0"
