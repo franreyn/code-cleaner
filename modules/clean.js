@@ -1,6 +1,7 @@
 import gulp from "gulp";
 import dom from "gulp-dom";
 import beautify from "gulp-jsbeautifier";
+import strip from "gulp-strip-comments";
 
 export function clean() {
 	gulp.task("clean", async () => {
@@ -103,6 +104,17 @@ export function clean() {
 					});
 				})
 			)
+
+			// remove google font link
+			.pipe(
+				dom(function () {
+					const googleFont = this.querySelector("link[href*='https://fonts.googleapis.com/css']");
+					googleFont.remove();
+				})
+			)
+
+			// remove all comments
+			.pipe(strip())
 
       // beautify code
 			.pipe(
