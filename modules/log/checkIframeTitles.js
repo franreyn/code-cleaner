@@ -12,6 +12,14 @@ export function checkIframeTitles(document, filePath, errors, stringsToCheck) {
     if (src && (src.startsWith("https://pima.h5p.com") || src.includes("/d2l/common/dialogs/quickLink/quickLink"))) {
       return;
     }
+
+    // If the iframe doesn't have a title attribute, log it
+    if (!title) {
+      if (!errors[filePath]) {
+        errors[filePath] = [];
+      }
+      errors[filePath].push('Iframe without title detected.');
+    }
     
 
     let parent = iframe.parentElement;
