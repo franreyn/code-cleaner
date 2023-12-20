@@ -6,6 +6,7 @@ import { checkContentBody } from "./log/checkContentBody.js"
 import { checkContentWrapper } from "./log/checkContentWrapper.js"
 import { checkDeprecatedClasses } from "./log/checkDeprecatedClasses.js"
 import { checkDoctype } from "./log/checkDoctype.js"
+import { checkFigcaptions } from "./log/checkFigcaption.js"
 import { checkHeader } from "./log/checkHeader.js"
 import { checkHtmlLang } from "./log/checkHtmlLang.js"
 import { checkIframes } from "./log/checkIframes.js"
@@ -27,6 +28,7 @@ export function log() {
 
           checkDoctype(document, file.path, errors);
           checkHtmlLang(document, file.path, errors);
+          checkFigcaptions(document, file.path, errors);
           checkHeader(document, file.path, errors);
           checkContentWrapper(document, file.path, errors);
           checkIframes(document, file.path, errors);
