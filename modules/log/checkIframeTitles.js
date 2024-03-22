@@ -1,7 +1,7 @@
 export function checkIframeTitles(document, filePath, errors, stringsToCheck) {
   // Get all iframes from the document
   let iframes = Array.from(document.querySelectorAll('iframe'));
-  stringsToCheck= ["YouTube video player"];
+  stringsToCheck = ["YouTube video player"];
 
   // Check each iframe
   iframes.forEach(iframe => {
@@ -9,10 +9,9 @@ export function checkIframeTitles(document, filePath, errors, stringsToCheck) {
     let title = iframe.getAttribute('title');
 
     // If the iframe's src starts with "https://pima.h5p.com", skip it completely
-    if (src && (src.startsWith("https://pima.h5p.com") || src.includes("/d2l/common/dialogs/quickLink/quickLink"))) {
+    if (src && (src.startsWith("https://pima.h5p.com") || src.includes("/d2l/common/dialogs/quickLink/quickLink") || src.includes("h5p"))) {
       return;
     }
-    
 
     let parent = iframe.parentElement;
     let foundMediaObject = false;
