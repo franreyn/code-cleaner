@@ -1,13 +1,6 @@
+import { logError } from "./utilities/logError.js"
+
 export function checkImgAlt(document, filePath, errors) {
-
-  // Helper function to log errors
-  const logError = (message) => {
-    if (!errors[filePath]) {
-      errors[filePath] = [];
-    }
-    errors[filePath].push(message);
-  };
-
   // Get all <img> elements
   let imgElements = document.querySelectorAll('img');
 
@@ -19,29 +12,29 @@ export function checkImgAlt(document, filePath, errors) {
   
       if (isInHeader) {
         // If in a <header>, log a specific error for a missing alt attribute only
-        logError('A header <img> element is missing its alt attribute');
+        logError(img, 'A header <img> element is missing its alt attribute', filePath, errors);
       } else {
         // If not in a <header>, check if the <img> is inside a <figure> with a <figcaption>
         const parent = img.parentElement;
         if (!parent || parent.tagName !== 'FIGURE' || !parent.querySelector('figcaption')) {
-          logError('An <img> element is missing its alt attribute and is not inside a <figure> with a <figcaption>');
+          logError(img, 'An <img> element is missing its alt attribute and is not inside a <figure> with a <figcaption>', filePath, errors);
         } else {
           // <img> is inside a <figure> with a <figcaption> but missing alt attribute
-          logError('An <img> within a <figure> element is missing its alt attribute');
+          logError(img, 'An <img> within a <figure> element is missing its alt attribute', filePath, errors);
         }
       }
     }
 
     // Check if <img> is inside a <p> tag
     if (img.parentElement && img.parentElement.tagName === 'P') {
-      logError('An <img> element is inside a <p> tag');
+      logError(img, 'An <img> element is inside a <p> tag', filePath, errors);
     }
 
     // Check for unnecessary attributes
     const attributes = ['decoding', 'fetchpriority', 'height', 'loading', 'srcset', 'style', 'sizes', 'width'];
     attributes.forEach((attribute) => {
       if (img.hasAttribute(attribute)) {
-        logError(`An <img> element contains the attribute: ${attribute}`);
+        logError(img, `An <img> element contains the attribute: ${attribute}`, filePath, errors);
       }
     });
   });

@@ -1,3 +1,4 @@
+import { logError } from "./utilities/logError.js"
 import { config } from "../../config.js";
 
 const titlesToCheck = config.titlesToCheck;
@@ -39,10 +40,7 @@ export function checkIframeTitles(document, filePath, errors) {
 
     // Log errors based on the checks
     if (!foundMediaObject || !foundMediaContainer) {
-      if (!errors[filePath]) {
-        errors[filePath] = [];
-      }
-      errors[filePath].push('Invalid iframe detected (not wrapped by \'.media-container\' and/or \'.media-object\').');
+      logError(iframe, 'Invalid iframe detected (not wrapped by \'.media-container\' and/or \'.media-object\').', filePath, errors);
     }
 
     // If 'media-container' does not have a 'media-info' sibling, check the iframe's title attribute
@@ -50,10 +48,7 @@ export function checkIframeTitles(document, filePath, errors) {
       titlesToCheck.forEach(str => {
         // Exclude Youtube placeholder iframes from log since those have the default title attr
         if (!iframesToExclude.some(url => src && src.includes(url)) && title.includes(str)) {
-          if (!errors[filePath]) {
-            errors[filePath] = [];
-          }
-          errors[filePath].push(`Invalid iframes detected (incorrect title attribute: "${str}".)`);
+          logError(iframe, `Invalid iframe detected (incorrect title attribute: "${str}".)`, filePath, errors);
         }
       });
     }
