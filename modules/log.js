@@ -1,6 +1,7 @@
 import gulp from 'gulp';
 import { JSDOM as jsdom } from 'jsdom';
 import through2 from 'through2';
+import fs from 'fs';
 import path from 'path';
 import { checkContentBody } from "./log/checkContentBody.js"
 import { checkContentWrapper } from "./log/checkContentWrapper.js"
@@ -15,6 +16,8 @@ import { checkIframeTitles } from './log/checkIframeTitles.js';
 import { checkPanoptoWrapper } from './log/checkPanoptoContainer.js';
 import { checkHeadings } from './log/checkHeadings.js';
 import { checkIframeOnlyPages } from './log/checkIframeOnlyPages.js';
+
+const logTitleMessage = "Log Report for Course Review"
 
 export function log() {
   let errors = {};
@@ -59,25 +62,46 @@ export function log() {
       .on('finish', () => {
         let hasErrors = false;
         let t = 1;
+
+				const reportsLog = [];
+				reportsLog.push(logTitleMessage);
+				reportsLog.push(`${new Date().toLocaleString()}`);
+				reportsLog.push('--------------------------------------------------');
       
         for (let e in errors) {
           if (errors[e].length > 0) {
             let r = path.relative('_input', e);
             console.log(`${t}. Errors in file "${r}":`);
+						let fileErrors = [`${t}. Errors in file "${r}":`];
             for (let n of errors[e]) {
               console.log(` > ${n}`);
+							fileErrors.push(` > ${n}`);
             }
             console.log('--------------------------------------------------');
+						reportsLog.push(fileErrors.join('\n'));
             t++;
             hasErrors = true;
           }
         }
       
         if (!hasErrors) {
+					if (!hasErrors) {
+						reportsLog.push(`--------------------------------------------------\nNo errors found.\n--------------------------------------------------`);
+					}
           console.log(`--------------------------------------------------
 No errors found.
 --------------------------------------------------`);
         }
+
+				 // Write to a .txt file (or .json if you'd rather serialize it)
+				 const reportsPath = './_reports/log-output.txt';
+
+				 if (!fs.existsSync('reports')) {
+					fs.mkdirSync('reports');
+				}
+
+				 fs.writeFileSync(reportsPath, reportsLog.join('\n\n'), 'utf8');
+				 console.log(`Log written to: ${reportsPath}`);
       })            
   );
 }

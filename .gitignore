@@ -2,6 +2,7 @@
 node_modules
 _input/**/*
 _output/**/*
+_reports/*
 ._*
 .Spotlight-V100
 .Trashes
