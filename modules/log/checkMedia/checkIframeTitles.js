@@ -1,19 +1,19 @@
-import { config } from "../../../config.js";
+import { config, errorMessages } from "../../../config.js";
 
 const titlesToCheck = config.titlesToCheck;
 const iframesToExclude = config.iframesToExclude;
 
 export function checkIframeTitles(document, filePath, errors) {
   // Get all iframes from the document
-  let iframes = Array.from(document.querySelectorAll('iframe'));
+  let iframes = Array.from(document.querySelectorAll(config.iframeSelector));
 
   // Check each iframe
   iframes.forEach(iframe => {
-    let src = iframe.getAttribute('src');
-    let title = iframe.getAttribute('title');
+    let src = iframe.getAttribute(config.sourceSelector);
+    let title = iframe.getAttribute(config.titleSelector);
 
     // If the iframe's src starts with "https://pima.h5p.com", skip it completely
-    if (src && (src.startsWith("https://pima.h5p.com") || src.includes("/d2l/common/dialogs/quickLink/quickLink") || src.includes("h5p"))) {
+    if (src && (src.startsWith(config.h5pUrlStarting) || (src.includes((url => url.contains(config.h5pUrlSelector)))))) {
       return;
     }
 
@@ -23,17 +23,17 @@ export function checkIframeTitles(document, filePath, errors) {
     let hasMediaInfoSibling = false;
 
     // Check if the iframe is contained within a div with the class 'media-object'
-    if (parent && parent.tagName.toLowerCase() === 'div' && parent.getAttribute('class') === 'media-object') {
+    if (parent && parent.tagName.toLowerCase() === config.divSelector && parent.getAttribute("class") === config.mediaObjectSelector) {
       foundMediaObject = true;
 
       // Check if the 'media-object' is wrapped by 'media-container'
       let grandParent = parent.parentElement;
-      if (grandParent && grandParent.tagName.toLowerCase() === 'div' && grandParent.classList.contains('media-container')) {
+      if (grandParent && grandParent.tagName.toLowerCase() === config.divSelector && grandParent.classList.contains(config.mediaContainerSelector)) {
         foundMediaContainer = true;
 
         // Check if 'media-container' has a sibling with the class 'media-info'
         let siblings = Array.from(grandParent.children);
-        hasMediaInfoSibling = siblings.some(sibling => sibling.getAttribute('class') === 'media-info');
+        hasMediaInfoSibling = siblings.some(sibling => sibling.getAttribute("class") === config.mediaInfoSelector);
       }
     }
 
@@ -42,7 +42,7 @@ export function checkIframeTitles(document, filePath, errors) {
       if (!errors[filePath]) {
         errors[filePath] = [];
       }
-      errors[filePath].push('Invalid iframe detected (not wrapped by \'.media-container\' and/or \'.media-object\').');
+      errors[filePath].push(errorMessages.iframeWrapperErrorMessage);
     }
 
     // If 'media-container' does not have a 'media-info' sibling, check the iframe's title attribute
@@ -53,7 +53,7 @@ export function checkIframeTitles(document, filePath, errors) {
           if (!errors[filePath]) {
             errors[filePath] = [];
           }
-          errors[filePath].push(`Invalid iframes detected (incorrect title attribute: "${str}".)`);
+          errors[filePath].push(errorMessages.iframeTitleErrorMessage.replace("{str}", str));
         }
       });
     }

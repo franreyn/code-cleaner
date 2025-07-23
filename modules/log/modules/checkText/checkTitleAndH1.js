@@ -1,7 +1,9 @@
+import { config, errorMessages } from '../../../../config.js';
+
 export function checkTitleAndH1(document, filePath, errors) {
   // Get the <title> and <h1> elements
-  let title = document.querySelector('title');
-  let h1 = document.querySelector('h1');
+  let title = document.querySelector(config.titleSelector);
+  let h1 = document.querySelector(config.h1Selector);
 
   if (title && h1) {
     // Check if the text content of <title> and <h1> match
@@ -9,13 +11,13 @@ export function checkTitleAndH1(document, filePath, errors) {
       if (!errors[filePath]) {
         errors[filePath] = [];
       }
-      errors[filePath].push('<title> and <h1> do not match');
+      errors[filePath].push(errorMessages.titleAndH1MismatchErrorMessage);
     }
   } else if (!title) {
 		if (!errors[filePath]) {
 			errors[filePath] = [];
 		}
-		errors[filePath].push('Missing <title> element');
+		errors[filePath].push(errorMessages.missingTitleErrorMessage);
     
   }
 }

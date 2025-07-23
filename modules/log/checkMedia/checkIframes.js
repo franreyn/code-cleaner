@@ -1,18 +1,20 @@
+import { config, errorMessages } from "../../../config.js";
+
 export function checkIframes(document, filePath, errors) {
   // Get all iframes from the document
-  let iframes = Array.from(document.querySelectorAll('iframe'));
+  let iframes = Array.from(document.querySelectorAll(config.iframeSelector));
 
   // Check each iframe
   iframes.forEach(iframe => {
-    let src = iframe.getAttribute('src');
+    let src = iframe.getAttribute(config.sourceSelector);
 
     // Check if the iframe uses h5p and if it does, ensure it is wrapped in a div
-    if (src && src.includes("/d2l/common/dialogs/quickLink") || src.includes("https://pima.h5p.com/content") || src.includes("h5p")) {
+    if (src && config.h5pUrlSelector.some(url => src.includes(url))) {
       let parent = iframe.parentElement;
 
       // Check if the iframe is contained within a div with the class 'media-object'
       while (parent !== null) {
-        if (parent.tagName.toLowerCase() === 'div') {
+        if (parent.tagName.toLowerCase() === config.divSelector) {
           return;
         }
         parent = parent.parentElement;
@@ -22,17 +24,17 @@ export function checkIframes(document, filePath, errors) {
       if (!errors[filePath]) {
         errors[filePath] = [];
       }
-      errors[filePath].push('Invalid iframes detected (h5p iframe not contained within \'div\' tag)');
+      errors[filePath].push(errorMessages.h5pIframeErrorMessage);
     }
 
     // Check if the iframe's src attribute includes specific URLs
-    if (src && (src.includes('https://www.youtube.com') || src.includes('https://pima-cc.hosted.panopto.com'))) {
+    if (src && (config.iframeUrlCheck.some(url => src.includes(url)))) {
 
       let parent = iframe.parentElement;
 
       // Check if the iframe is contained within a div with the class 'media-object'
       while (parent !== null) {
-        if (parent.tagName.toLowerCase() === 'div' && parent.getAttribute('class') === 'media-object') {
+        if (parent.tagName.toLowerCase() === config.divSelector && parent.getAttribute("class") === config.mediaObjectSelector) {
           return;
         }
         parent = parent.parentElement;
@@ -42,7 +44,7 @@ export function checkIframes(document, filePath, errors) {
       if (!errors[filePath]) {
         errors[filePath] = [];
       }
-      errors[filePath].push('Invalid iframes detected (not contained within \'.media-container\')');
+      errors[filePath].push(errorMessages.iframeErrorMessage);
     }
   });
 }

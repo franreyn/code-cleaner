@@ -1,6 +1,8 @@
+import { config, errorMessages } from "../../../config.js";
+
 export const checkImgParent = (document, filePath, errors) => {
 
-	const imgElements = document.querySelectorAll('img');
+	const imgElements = document.querySelectorAll(config.imageSelector);
 
 	if(imgElements.length > 0) {
 		imgElements.forEach(img => {
@@ -11,7 +13,7 @@ export const checkImgParent = (document, filePath, errors) => {
 					if (!errors[filePath]) {
 						errors[filePath] = [];
 					}
-				errors[filePath].push("An <img> element is wrapped in a <p> tag.")
+				errors[filePath].push(errorMessages.paragraphWrapperErrorMessage)
 				}
 			}
 		})

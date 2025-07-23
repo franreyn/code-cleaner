@@ -1,4 +1,4 @@
-import { domTransform } from "..//hooks/domTransform.js";
+import { domTransform } from "../hooks/domTransform.js";
 import { config } from "../../config.js";
 
 // Array of tags to remove, leaving content intact
@@ -6,7 +6,7 @@ const innerContentBodyTagsToRemove = config.innerContentBodyTagsToRemove;
 
 export function removeContentBodyInnerTags() {
 	return domTransform((document) => {
-		const contentBodyElements = document.querySelectorAll('.content-body');
+		const contentBodyElements = document.querySelectorAll(config.contentBodySelector);
     
     // Loop through each .content-body element
     contentBodyElements.forEach(contentBody => {

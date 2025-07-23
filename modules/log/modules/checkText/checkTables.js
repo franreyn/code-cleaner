@@ -1,16 +1,16 @@
-import { config } from '../../../../config.js';
+import { config, errorMessages } from '../../../../config.js';
 
 const vertTableClasses = config.vertTableClasses;
 
 
 export function checkTables(document, filePath, errors) {
   // Get all tables from the document
-  let tables = document.querySelectorAll('table');
+  let tables = document.querySelectorAll(config.tableSelector);
 
   // Check each table
   tables.forEach(table => {
     // Check if the table has the 'display-lg' class
-    if (!table.classList.contains('display-lg')) {
+    if (!table.classList.contains(config.displayLgClass)) {
 
 			// Check if the table has any of the specified classes for vertical tables
 			if(!vertTableClasses.some(className => table.classList.contains(className))) {
@@ -19,26 +19,26 @@ export function checkTables(document, filePath, errors) {
 			if (!errors[filePath]) {
         errors[filePath] = [];
       }
-      errors[filePath].push('A table does not contain \'.display-lg\'');
+      errors[filePath].push(errorMessages.displayLgClassErrorMessage);
 		} 
     }
 
     // Check the structure of the table
-    let thead = table.querySelector('thead');
+    let thead = table.querySelector(config.theadSelector);
     if (thead) {
-      let tr = thead.querySelector('tr');
+      let tr = thead.querySelector(config.trSelector);
       if (tr) {
-        if (tr.querySelectorAll('th[scope=\'col\']').length === 0) {
+        if (tr.querySelectorAll(config.scopeSelector).length === 0) {
           if (!errors[filePath]) {
             errors[filePath] = [];
           }
-          errors[filePath].push('A table does not contain the correct structure (missing <th scope=\'col\'> within <thead>)');
+          errors[filePath].push(errorMessages.misssingScopeErrorMessage);
         }
       } else {
         if (!errors[filePath]) {
           errors[filePath] = [];
         }
-        errors[filePath].push('A table does not contain the correct structure (missing <tr> within <thead>)');
+        errors[filePath].push(errorMessages.missingTrErrorMessage);
       }
     } else if(vertTableClasses.some(className => table.classList.contains(className))) {
 			// Check if the table has any of the specified classes for vertical tables, if not, then 
@@ -46,7 +46,7 @@ export function checkTables(document, filePath, errors) {
       if (!errors[filePath]) {
         errors[filePath] = [];
       }
-      errors[filePath].push('A table does not contain the correct structure (missing <thead>)');
+      errors[filePath].push(errorMessages.missingTheadErrorMessage);
     }
   });
 }

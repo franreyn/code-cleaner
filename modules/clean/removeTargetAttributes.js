@@ -1,8 +1,9 @@
-import { domTransform } from "..//hooks/domTransform.js";
+import { domTransform } from "../hooks/domTransform.js";
+import { config } from "../../config.js";
 
 export function removeTargetAttributes() {
   return domTransform((document) => {
-    const elements = document.querySelectorAll('[target="_self"], [target="_new"]');
-    elements.forEach((el) => el.removeAttribute("target"));
+    const elements = document.querySelectorAll(config.targetSelectors);
+    elements.forEach((el) => el.removeAttribute(config.targetAttributeToRemove));
   });
 }

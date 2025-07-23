@@ -1,10 +1,12 @@
+import { config, errorMessages } from '../../../../config.js';
+
 export function checkDeprecatedClass(document, filePath, errors) {
-  const deprecatedClasses = ["main", "main-two-column", "sidebar", "video-container"];
+  const deprecatedClasses = config.deprecatedClasses;
 
   deprecatedClasses.forEach(deprecatedClass => {
     const elements = document.getElementsByClassName(deprecatedClass);
     if (elements.length > 0) {
-      errors[filePath].push(`Contains deprecated class (${deprecatedClass})`);
+      errors[filePath].push(errorMessages.deprecatedClassErrorMessage.replace('{deprecatedClass}', deprecatedClass));
     }
   });
 }

@@ -1,9 +1,11 @@
+import { config, errorMessages } from "../../../../config.js";
+
 export function checkDeprecatedId(document, filePath, errors) {
-  const deprecatedIds = ["main", "main-two-column", "sidebar", "video-container"];
+  const deprecatedIds = config.deprecatedClasses;
 
   deprecatedIds.forEach(deprecatedId => {
     if (document.getElementById(deprecatedId)) {
-      errors[filePath].push(`Contains deprecated id (${deprecatedId})`);
+      errors[filePath].push(errorMessages.deprecatedIdErrorMessage.replace('{deprecatedId}', deprecatedId));
     }
   });
 }

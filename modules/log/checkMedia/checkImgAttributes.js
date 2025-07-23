@@ -1,3 +1,5 @@
+import { config, errorMessages } from "../../../config.js";
+
 export function checkImgAttributes(document, filePath, errors) {
 
   // Helper function to log errors
@@ -9,34 +11,34 @@ export function checkImgAttributes(document, filePath, errors) {
   };
 
   // Get all <img> elements
-  let imgElements = document.querySelectorAll('img');
+  let imgElements = document.querySelectorAll(config.imageSelector);
 
   imgElements.forEach((img) => {
     // Check if alt attribute is missing
-    if (!img.hasAttribute('alt')) {
+    if (!img.hasAttribute(config.altSelector)) {
       // Check if the <img> is within a <header>
-      const isInHeader = img.closest('header') !== null;
+      const isInHeader = img.closest(config.headerSelector) !== null;
   
       if (isInHeader) {
         // If in a <header>, log a specific error for a missing alt attribute only
-        logError('A header <img> element is missing its alt attribute');
+        logError(errorMessages.headerAltTitleErrorMessage);
       } else {
         // If not in a <header>, check if the <img> is inside a <figure> with a <figcaption>
         const parent = img.parentElement;
-        if (!parent || parent.tagName !== 'FIGURE' || !parent.querySelector('figcaption')) {
-          logError('An <img> element is missing its alt attribute (and is not part of a <figure> with a <figcaption>)');
+        if (!parent || parent.tagName !== config.figureSelector.toUpperCase() || !parent.querySelector(config.figcaptionSelector)) {
+          logError(errorMessages.nonFigureAltErrorMessage);
         } else {
           // <img> is inside a <figure> with a <figcaption> but missing alt attribute
-          logError('An <img> within a <figure> element is missing its alt attribute');
+          logError(errorMessages.figureAltTextErrorMesage);
         }
       }
     }
 
     // Check for unnecessary attributes
-    const attributes = ['decoding', 'fetchpriority', 'height', 'loading', 'srcset', 'style', 'sizes', 'width'];
+    const attributes = config.imageAttributesToRemove;
     attributes.forEach((attribute) => {
       if (img.hasAttribute(attribute)) {
-        logError(`An <img> element contains the unnecessary attribute: ${attribute}`);
+        logError(errorMessages.unnecessaryAttributeErrorMessage.replace("{attribute}", attribute));
       }
     });
   });
