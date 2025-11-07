@@ -342,28 +342,13 @@ app.get("/api/list", async (_req, res) => {
 });
 
 /**
- * Cleans the files from the `_input` directory and places them in the `_output` directory.
+ * Cleans the files in the `_input` directory (in-place).
+ * This relies on the "clean" script being configured to read from and write back to _input.
+ * Manual image handling to _output is removed.
  */
 app.post("/api/clean", async (req, res) => {
-  const imageRegex = /\.(jpe?g|png|gif|svg)$/i;
 
   try {
-    // First, ensure the output directory is completely empty. This prevents
-    // files from previous runs from being included.
-    await fs.emptyDir(OUTPUT_DIR);
-
-    // Manually copy image files to prevent them from being processed by Gulp,
-    // which can increase their file size.
-    const allFiles = await fs.readdir(INPUT_DIR, { recursive: true });
-    for (const file of allFiles) {
-      if (imageRegex.test(file)) {
-        const sourcePath = path.join(INPUT_DIR, file);
-        const destPath = path.join(OUTPUT_DIR, file);
-        await fs.ensureDir(path.dirname(destPath));
-        await fs.copy(sourcePath, destPath);
-      }
-    }
-
     // Now, run the 'clean' script. This script should be configured in Gulp
     // to only process non-image files (e.g., HTML, CSS, JS).
     await execa("npm", ["run", "clean"]);
