@@ -28,6 +28,6 @@ export function clean() {
       .pipe(cleanImageAttributes())
       .pipe(beautify({ indent_size: 2, wrap_attributes: false, extra_liners: [] }))
       .pipe(beautify.reporter())
-      .pipe(gulp.dest("_output"));
+      .pipe(gulp.dest("_input"));
   });
 }
