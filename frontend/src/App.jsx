@@ -529,6 +529,8 @@ export default function App() {
 
               // Clean uploaded files right away on the server
               await handleClean();
+              // After cleaning, refresh the file list to get the updated content from the server.
+              await refreshList();
             } else {
               // Otherwise (modal closed, or no files selected), refresh from server.
               await refreshList();
