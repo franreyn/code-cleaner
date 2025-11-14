@@ -526,6 +526,11 @@ export default function App() {
             if (uploadedFiles && uploadedFiles.length > 0) {
               // The handleFiles function is now part of the useFileManager hook
               await handleFiles(uploadedFiles);
+
+              // Clean uploaded files right away on the server
+              await handleClean();
+              // After cleaning, refresh the file list to get the updated content from the server.
+              await refreshList();
             } else {
               // Otherwise (modal closed, or no files selected), refresh from server.
               await refreshList();
