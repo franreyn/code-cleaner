@@ -8,8 +8,8 @@
     "start": "gulp clean-copy && gulp log && gulp check-image-sizes",
     "log": "gulp log && gulp check-image-sizes",
     "clean": "gulp clean-copy",
-		"server": "node server/index.js",
-  	"server:dev": "nodemon server/index.js"
+    "server": "node server/index.js",
+    "server:dev": "nodemon server/index.js"
   },
   "author": "Francisco Reynoso",
   "license": "MIT",
@@ -30,6 +30,6 @@
     "execa": "^9.6.0",
     "express": "^5.1.0",
     "fs-extra": "^11.3.1",
-    "multer": "^2.0.2"
+    "multer": "^2.1.0"
   }
 }
