@@ -1,6 +1,9 @@
 // Configuration for Code Cleaner
 export const config = {
 
+	// Empty tag selector - used to identify empty tags for removal
+	emptyTagSelector: "p, div, span, header, footer , ul , ol , li, dl, dt, dd, h1, h2, h3, h4, h5, h6",
+
 	// Array of tags to remove, leaving content intact when located inside a content body
 	innerContentBodyTagsToRemove : ["header", "footer"],
 
