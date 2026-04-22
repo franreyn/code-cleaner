@@ -6,41 +6,22 @@
 import { domTransform } from "../hooks/domTransform.js";
 import { config } from "../../config.js";
 
-// Helper function to remove empty text nodes, which can cause tags to appear non-empty (especially &nbsp;)
+// Helper function to specifically target empty text nodes using a TreeWalker vs query selector
 function removeEmptyTextNodes(root) {
-  // Using ownerDocument to ensure we get the correct document context, especially if root is a DocumentFragment or an Element
-  const htmlDocToParse = root && (root.ownerDocument || root);
-
-  // NodeFilter may not be available in all environments, so we check for it and fall back to global node filter if possible
-  const NodeFilterObj = (htmlDocToParse && htmlDocToParse.defaultView && htmlDocToParse.defaultView.NodeFilter) || global.NodeFilter;
-
-  // Create a TreeWalker to traverse text nodes. If NodeFilter is not available, we can still use SHOW_TEXT (4) directly.
-  const treeWalkerForTextNodes = (htmlDocToParse || global).createTreeWalker(
-    root,
-    NodeFilterObj ? NodeFilterObj.SHOW_TEXT : 4, // 4 is a bitmask to show only text nodes, so we only traverse text nodes
-    null
-  );
-
-  // Initialize an array to hold text nodes that are empty and should be removed
+  const htmlDocToParse = root.ownerDocument || root;
+  // Use the document's createTreeWalker. 4 is the bitmask for NodeFilter.SHOW_TEXT.
+  const treeWalkerForTextNodes = htmlDocToParse.createTreeWalker(root, 4, null);
   const emptyTextNodes = [];
-
-  // Create placeholder node to prevent issues with live node lists when removing nodes during traversal
   let currentNode;
 
-  // Traverse the text nodes in the document
   while ((currentNode = treeWalkerForTextNodes.nextNode())) {
-
-    // Clean the text content by removing all whitespace characters, including non-breaking spaces and zero-width spaces
-    const cleanedTextNode = currentNode.nodeValue
-      .replace(/[\s\u00A0\u2007\u202F\uFEFF\u200B]/g, '');
-
-    // If the cleaned text is empty, we mark this node for removal
+    // Clean text by removing whitespace, non-breaking spaces, etc.
+    const cleanedTextNode = currentNode.nodeValue.replace(/[\s\u00A0\u2007\u202F\uFEFF\u200B]/g, '');
     if (cleanedTextNode.length === 0) {
       emptyTextNodes.push(currentNode);
     }
   }
 
-  // After traversal, we remove all the nodes that were marked for removal
   emptyTextNodes.forEach(emptyNode => emptyNode.remove());
 }
 
@@ -48,33 +29,25 @@ function removeEmptyTextNodes(root) {
 export function removeEmptyTags() {
   return domTransform((document) => {
 
-    // Intialize a flag to track if we found and removed any empty tags in the current iteration
-    let foundEmpty;
+    // First, remove stray whitespace / &nbsp; text nodes so element checks are accurate.
+    removeEmptyTextNodes(document);
 
-    do {
-      // Set it to false so that the while loop will exit if we don't find any empty tags to remove in this iteration
-      foundEmpty = false;
+    const allPotentiallyEmptyTags = Array.from(document.querySelectorAll(config.emptyTagSelector));
+    if (allPotentiallyEmptyTags.length === 0) return;
 
-      const emptyHtmlTags = document.querySelectorAll(config.emptyTagSelector);
+    // Bottom-up pass: iterate in reverse so children are processed before parents.
+    for (let tagCheckerIndex = allPotentiallyEmptyTags.length - 1; tagCheckerIndex >= 0; tagCheckerIndex--) {
+      const currentTag = allPotentiallyEmptyTags[tagCheckerIndex];
+      if (!currentTag.isConnected) continue; // may have been removed already
 
-      emptyHtmlTags.forEach((emptyTag) => {
-        const cleanedEmptyTags = emptyTag.textContent
-          .replace(/[\s\u00A0\u2007\u202F\uFEFF\u200B]/g, '');
+      const cleanedTag = currentTag.textContent.replace(/[\s\u00A0\u2007\u202F\uFEFF\u200B]/g, '');
+      const hasNoText = cleanedTag.length === 0;
+      const hasNoChildren = currentTag.children.length === 0;
 
-        // Ensure that the tag has no text content (after cleaning)
-        const hasNoText = cleanedEmptyTags.length === 0;
-        const hasNoChildren = emptyTag.children.length === 0;
+      if (hasNoText && hasNoChildren) currentTag.remove();
+    }
 
-        if (hasNoText && hasNoChildren) {
-          // Remove empty tags
-          emptyTag.remove();
-          foundEmpty = true;
-        }
-      });
-
-      // Remove empty text nodes
-      removeEmptyTextNodes(document);
-
-    } while (foundEmpty);
+    // Clean up any text nodes left after removals.
+    removeEmptyTextNodes(document);
   });
 }
