@@ -329,7 +329,16 @@ export default function App() {
         throw new Error(data.error || 'An unknown error occurred during cleaning.');
       }
 
-      addToast(data.message, 'success');
+        addToast(data.message, 'success');
+
+        // Refresh the file list so the frontend picks up the cleaned files.
+        // If we had a prior scan, re-run it to update the report.
+        try {
+          await refreshList();
+          if (scanReport) await scan();
+        } catch (e) {
+          console.error('Error refreshing after clean:', e);
+        }
     } catch (err) {
       console.error('Cleaning failed:', err);
       addToast(`Cleaning failed: ${err.message}`, 'error');

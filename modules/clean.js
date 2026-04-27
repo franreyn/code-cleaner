@@ -4,6 +4,7 @@ import beautify from "gulp-jsbeautifier";
 import { cleanTextElements } from "./clean/cleanTextElements.js";
 import { cleanElementAttributes } from "./clean/cleanElementAttributes.js";
 import { cleanTableAttributes } from "./clean/cleanTableAttributes.js";
+import { removeEmptyTags } from "./clean/removeEmptyTags.js";
 import { removeTargetAttributes } from "./clean/removeTargetAttributes.js";
 import { removeRolePresentation } from "./clean/removeRolePresentation.js";
 import { matchTitleToH1 } from "./clean/matchTitleToH1.js";
@@ -21,6 +22,7 @@ export function clean() {
       .pipe(cleanElementAttributes())
       .pipe(cleanTableAttributes())
       .pipe(removeContentBodyInnerTags())
+      .pipe(removeEmptyTags())
       .pipe(removeJQueryScript())
       .pipe(removeTargetAttributes())
       .pipe(removeRolePresentation())

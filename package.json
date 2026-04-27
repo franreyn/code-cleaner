@@ -1,6 +1,6 @@
 {
   "name": "code-cleaner",
-  "version": "0.5.35",
+  "version": "0.6.0",
   "description": "This code cleaner app is a code cleaning automation tool designed to format and log errors for the markup used to build courses with the PimaOnline Themepack.",
   "main": "index.js",
   "scripts": {
