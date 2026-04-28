@@ -27,12 +27,9 @@ export function checkIframeTitles(document, filePath, errors) {
 				return; // skip this iframe entirely
 			}
 
-    const parent = iframe.parentElement;
-
-    // If 'media-container' does not have a 'media-info' sibling, check the iframe's title attribute
     if (title) {
       titlesToCheck.forEach(str => {
-        if (title.includes(str)) {
+        if (title.toLowerCase().includes(str.toLowerCase())) {
           fileErrors.push({
             message: errorMessages.iframeTitleErrorMessage.replace("{str}", str),
             node: iframe,
