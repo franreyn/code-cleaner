@@ -1,6 +1,6 @@
 {
   "name": "code-cleaner",
-  "version": "0.7.1",
+  "version": "0.7.2",
   "description": "This code cleaner app is a code cleaning automation tool designed to format and log errors for the markup used to build courses with the PimaOnline Themepack.",
   "main": "index.js",
   "packageManager": "pnpm@11.1.2",
@@ -25,9 +25,14 @@
     "gulp-filter": "^9.0.1",
     "gulp-jsbeautifier": "^3.0.1",
     "gulp-size": "^5.0.0",
-    "jsdom": "^26.1.0",
+    "jsdom": "^29.1.1",
     "nodemon": "^3.1.14",
     "through2": "^4.0.2"
+  },
+  "pnpm": {
+    "overrides": {
+      "js-yaml": "3.15.0"
+    }
   },
   "dependencies": {
     "archiver": "^7.0.1",
@@ -35,6 +40,7 @@
     "execa": "^9.6.1",
     "express": "^5.2.1",
     "fs-extra": "^11.3.5",
-    "multer": "^2.1.1"
+    "multer": "^2.2.0",
+    "whatwg-encoding": "^3.1.1"
   }
 }
